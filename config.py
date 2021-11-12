@@ -7,15 +7,15 @@ Config file for Streamlit App
 from member import Member
 
 
-TITLE = "My Awesome App"
+TITLE = "Py Eco Energy 4 cast project"
 
 TEAM_MEMBERS = [
     Member(
-        name="John Doe",
-        linkedin_url="https://www.linkedin.com/in/charlessuttonprofile/",
-        github_url="https://github.com/charlessutton",
+        name="Alain Barthelmé",
+        linkedin_url="https://www.linkedin.com/in/alain-barthelme-4a02b128/",
+        github_url="https://github.com/albart67",
     ),
-    Member("Jane Doe"),
+    Member("Christopher Kerth"),
 ]
 
-PROMOTION = "Promotion Bootcamp Data Scientist - April 2021"
+PROMOTION = "Promotion formation continue Data Analyste - Mai 2021"
