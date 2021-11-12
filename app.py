@@ -1,12 +1,14 @@
 from collections import OrderedDict
 
 import streamlit as st
+import pandas as pd
+import plotly_express as px
 
 # TODO : change TITLE, TEAM_MEMBERS and PROMOTION values in config.py.
 import config
 
 # TODO : you can (and should) rename and add tabs in the ./tabs folder, and import them here.
-from tabs import intro, second_tab, third_tab
+from tabs import intro, second_tab, third_tab, fourth
 
 
 st.set_page_config(
@@ -28,6 +30,7 @@ TABS = OrderedDict(
         (intro.sidebar_name, intro),
         (second_tab.sidebar_name, second_tab),
         (third_tab.sidebar_name, third_tab),
+        (fourth.sidebar_name, fourth),
     ]
 )
 
@@ -52,3 +55,5 @@ def run():
 
 if __name__ == "__main__":
     run()
+
+
