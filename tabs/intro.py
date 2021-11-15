@@ -1,7 +1,7 @@
 import streamlit as st
 
 
-title = "My Awesome DataScientest project."
+title = "Py Eco Energy 4 cast project"
 sidebar_name = "Introduction"
 
 
@@ -28,4 +28,5 @@ def run():
         - Explore a [New York City rideshare dataset]
           (https://github.com/streamlit/demo-uber-nyc-pickups)
         """
+
     )
