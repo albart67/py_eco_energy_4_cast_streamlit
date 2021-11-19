@@ -8,7 +8,7 @@ import plotly_express as px
 import config
 
 # TODO : you can (and should) rename and add tabs in the ./tabs folder, and import them here.
-from tabs import intro, second_tab, maps, third_tab, fbpModelNational, fbpModelRegional
+from tabs import intro, second_tab, maps, third_tab, fbpModelNational, fbpModelRegional, blackoutrisk
 
 
 st.set_page_config(
@@ -33,6 +33,7 @@ TABS = OrderedDict(
         (third_tab.sidebar_name, third_tab),
         (fbpModelNational.sidebar_name, fbpModelNational),
         (fbpModelRegional.sidebar_name, fbpModelRegional),
+        (blackoutrisk.sidebar_name, blackoutrisk)
         ]
 
 )
