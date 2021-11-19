@@ -40,7 +40,7 @@ def run():
     '''
     * Energy shortage is the difference between energy supply and energy consumption.
     * The maximum value is '''+str(max_val)+''' MWh on '''+str(pd.to_datetime(max_date[1655]).month_name())+''' '''+str(pd.to_datetime(max_date[1655]).day)+str(', ')+str(pd.to_datetime(max_date[1655]).year)+str('.')+'''
-    * On this date, '''+str(max_2_person_households)+''' 2-person households would theoretically suffer from energy shortage.
+    * On this date, '''+str(max_2_person_households)+''' two-person households would theoretically suffer from energy shortage.
     '''
      )
    
