@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import plotly_express as px
+import plotly.graph_objects as go
 
 
 title = "Blackout risk"
@@ -59,14 +60,29 @@ def run():
     # Compute the data
     df_blackout_region = df_blackout[(df_blackout['Région'] == region) & (df_blackout['Person Blackout'] > 0) & (pd.to_datetime(df_blackout['Date']).dt.year > 2013)]
     
+    # Modify the df for plotting
+    plot_df = pd.DataFrame(df_blackout_region[['Consommation (MW)','Person Blackout','warm month']])
+    plot_df['Consommation (MW)'] = plot_df['Consommation (MW)']/1000/2
+    plot_df = plot_df.rename(mapper={'Consommation (MW)':'Electricity consumption (GWh)', 
+    'Person Blackout': 'Persons affected', 'warm month': 'Warm month'}, axis = 1)
+    plot_df = plot_df.astype({'Warm month':'str'})
+
     # Plot the data
-    fig2 = px.scatter(df_blackout_region, 
-                      x = df_blackout_region['Consommation (MW)']/1000/2, 
-                      y = 'Person Blackout', 
-                      color = 'warm month', 
-                      range_color = [0,1], 
-                      labels = {'Person Blackout': 'Persons affected', \
-                                'x': 'Electricity consumption (GWh)'}, 
+    fig2 = px.scatter(plot_df, 
+                      x = 'Electricity consumption (GWh)', 
+                      y = 'Persons affected',
+                      color = 'Warm month', 
                       title = 'Regional blackout risk for '+ region)
-    fig2.update_layout(coloraxis_showscale=False)
+    fig2.update_layout(legend=dict(y=0.81, x=0.84))
+    
     st.write(fig2)
+
+    st.markdown(
+    '''
+    * We define regional blackout risk as the number of persons that are affected from energy shortage in that region.
+    * The number of persons affected equals regional energy shortage divided by the average electricity consumption per person in this region. 
+    * During warm month (May - September), the effect of energy shortage affects a higher number of people than during colder months.
+    * Possible explanation: Energy suppliers expect lower consumption during summer and therefore supply lower amounts of energy, which could lead to energy shortage when consumption peaks unexpectedly.
+    * Centre-Val de Loire, as an energy exporter, has a higher risk of energy shortage at low values of energy consumption compared with other regions.
+    '''
+    )
