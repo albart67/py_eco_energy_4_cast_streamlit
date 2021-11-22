@@ -74,7 +74,7 @@ def run():
                       color = 'warm_month', 
                       title = 'Regional blackout risk for '+ region,
                       labels={"warm_month": '',},
-                      category_orders = {'warm_month': ['1.0','0.0']})
+                      category_orders = {'warm_month': ['0.0','1.0']})
     fig2.update_layout(legend=dict(y=0.97, x=0.78))
 
     newnames = {'0.0':'Cold month', '1.0': 'Warm month'}
