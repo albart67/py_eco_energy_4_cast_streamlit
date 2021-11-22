@@ -64,16 +64,25 @@ def run():
     plot_df = pd.DataFrame(df_blackout_region[['Consommation (MW)','Person Blackout','warm month']])
     plot_df['Consommation (MW)'] = plot_df['Consommation (MW)']/1000/2
     plot_df = plot_df.rename(mapper={'Consommation (MW)':'Electricity consumption (GWh)', 
-    'Person Blackout': 'Persons affected', 'warm month': 'Warm month'}, axis = 1)
-    plot_df = plot_df.astype({'Warm month':'str'})
+    'Person Blackout': 'Persons affected', 'warm month': 'warm_month'}, axis = 1)
+    plot_df = plot_df.astype({'warm_month':'str'})
 
     # Plot the data
     fig2 = px.scatter(plot_df, 
                       x = 'Electricity consumption (GWh)', 
                       y = 'Persons affected',
-                      color = 'Warm month', 
-                      title = 'Regional blackout risk for '+ region)
-    fig2.update_layout(legend=dict(y=0.81, x=0.84))
+                      color = 'warm_month', 
+                      title = 'Regional blackout risk for '+ region,
+                      labels={"warm_month": '',},
+                      category_orders = {'warm_month': ['1.0','0.0']})
+    fig2.update_layout(legend=dict(y=0.97, x=0.78))
+
+    newnames = {'0.0':'Cold month', '1.0': 'Warm month'}
+    fig2.for_each_trace(lambda t: t.update(name = newnames[t.name],
+                                      legendgroup = newnames[t.name],
+                                      hovertemplate = t.hovertemplate.replace(t.name, newnames[t.name])
+                                     )
+                  )
     
     st.write(fig2)
 
