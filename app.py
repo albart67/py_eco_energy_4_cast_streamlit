@@ -8,7 +8,7 @@ import plotly_express as px
 import config
 
 # TODO : you can (and should) rename and add tabs in the ./tabs folder, and import them here.
-from tabs import intro, second_tab, maps, third_tab, fbpModelNational, fbpModelRegional, blackoutrisk
+from tabs import intro, second_tab, maps,fbpModelNational, fbpModelRegional, fbpModelRegionalRegT,fbpModelRegionalProdRegT, blackoutrisk
 
 
 st.set_page_config(
@@ -30,9 +30,10 @@ TABS = OrderedDict(
         (intro.sidebar_name, intro),
         (second_tab.sidebar_name, second_tab),
         (maps.sidebar_name, maps),
-        (third_tab.sidebar_name, third_tab),
         (fbpModelNational.sidebar_name, fbpModelNational),
         (fbpModelRegional.sidebar_name, fbpModelRegional),
+        (fbpModelRegionalRegT.sidebar_name, fbpModelRegionalRegT),
+        (fbpModelRegionalProdRegT.sidebar_name, fbpModelRegionalProdRegT),
         (blackoutrisk.sidebar_name, blackoutrisk)
         ]
 
@@ -44,6 +45,7 @@ def run():
         "https://dst-studio-template.s3.eu-west-3.amazonaws.com/logo-datascientest.png",
         width=200,
     )
+
     tab_name = st.sidebar.radio("", list(TABS.keys()), 0)
     st.sidebar.markdown("---")
     st.sidebar.markdown(f"## {config.PROMOTION}")

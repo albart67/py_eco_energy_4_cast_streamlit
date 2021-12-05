@@ -9,8 +9,8 @@ from prophet.plot import plot_cross_validation_metric
 from prophet.diagnostics import cross_validation
 
 
-title = "FB Prophet National Models"
-sidebar_name = "FB Prophet National Models"
+title = "National energy forecast with FB Prophet"
+sidebar_name = "National energy forecast"
 
 
 def run():
@@ -19,7 +19,8 @@ def run():
 
     st.markdown(
         """
-        On this page we will show the different models we have use on this project
+        We have seen in our analyse that the consumption has clearly a seasonal trend. We will use Facebook Prophet to
+        forecast the coming year for national electricity consumption and production.
         """
     )
 
@@ -41,8 +42,18 @@ def run():
     df_cv = cross_validation(m1, initial='2457 days', horizon = '615 days')
     df_p = performance_metrics(df_cv)
     fig = plot_cross_validation_metric(df_cv, metric='mape')
-    st.write('Mean MAPE value :', df_p.mape.mean())
+    st.write('Mean absolute percentage error :', (round(df_p.mean().mape, 2)*100), " %")
+    #st.write('Mean MAPE value :', df_p.mape.mean())
     st.write(fig)
+
+    st.markdown(
+        """
+        The mean absolute percent error for national consumption is about 7% with our model. As we have notice in the 
+        data analysis, there is a clear seasonality in the trend who bring a good efficiency to the model.
+        """
+    )
+
+    st.subheader("Consumption forecast and decompositon from model")
 
     st.markdown(
         """
@@ -133,7 +144,7 @@ def run():
             m = model_prod_hydr
         if prod_type == 'Pompage (MW)':
             m = model_prod_pomp
-        if prod_type == 'Bioénergie (MW)':
+        if prod_type == 'Bioénergies (MW)':
             m = model_prod_bio
         future = m.make_future_dataframe(periods = 365)
         forecast = m.predict(future)
@@ -142,9 +153,25 @@ def run():
         df_cv = cross_validation(m, initial='2457 days', horizon = '615 days')
         df_p = performance_metrics(df_cv)
         fig2 = plot_cross_validation_metric(df_cv, metric='mape')
-        st.write('Mean MAPE value :', df_p.mape.mean())
+        #st.write('Mean MAPE value :', df_p.mape.mean())
+        st.write('Mean absolute percentage error:', (round(df_p.mean().mape, 2)*100), " %")
         st.write(fig1)
         #st.write(fig2)
 
     prod_plot(prod_type)
+
+    st.markdown(
+        """
+        The production forecast as expected is not as accurate as consumption, we oberved a less obvious seasonnality 
+        on the data visualisation. 
+        
+        Trends are:
+        - A high MAPE for Eolian and solar (69 and 71%) cause this are natural energies and not regular.
+        - Best MAPE  (16%) for nuclear cause it's a controlable energy and the more used with a good seasonnality.
+        - Thermical has a high MAPE (67%) because it's a back-up energy who is activated any time as needed to support
+         nuclear.
+        - Bioenergie has a good MAPE (7 %), the amplitude between maximum and minimum production is lower.
+        
+        """
+    )
 

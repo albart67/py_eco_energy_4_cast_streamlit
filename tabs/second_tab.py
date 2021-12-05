@@ -5,8 +5,8 @@ from PIL import Image
 import plotly_express as px
 
 
-title = "Data analyse"
-sidebar_name = "Data analyse"
+title = "Global Data Analyse"
+sidebar_name = "Global Analyse"
 
 
 
@@ -17,7 +17,7 @@ def run():
 
     st.markdown(
         """
-        On this page we show the different analyses we made for this project
+        We start with exploring the dataset and visualising some useful information for our analyse.
         """
     )
 
@@ -41,6 +41,12 @@ def run():
     fig2 = px.line(df_cons_day, x='Date', y='Consommation (MW)', width=850, height=500)
     ts_chart = st.plotly_chart(fig2)
 
+    st.markdown(
+        """
+        There is clearly a seasonality in the electricity consumption
+        """
+    )
+
     st.subheader("Global consumption range for one week")
     #ANALYSE AND BAX PLOT OF THE GLOBAL CONSUMPTION INTO ONE WEEK
     df_cons_day2 = df_day.groupby(['Date','weekday'],as_index=False)['Consommation (MW)'].sum()
@@ -48,6 +54,11 @@ def run():
     fig3.update_traces(marker_color='darkblue')
     #fig3.update_xaxes(type='category')
     st.write(fig3)
+    st.markdown(
+        """
+        The consumption is about 10% lower in weekend
+        """
+    )
 
     st.subheader("Consumption range for the different regions")
     #COMPARISON OF THE DAILY CONSUMPTION RANGE BY REGION
@@ -57,6 +68,30 @@ def run():
     fig_plot2 = px.box(df_cons_day3, x="Région", y="Consommation (MW)", width=850, height= 600)
     fig_plot2.update_traces(marker_color='green')
     st.write(fig_plot2)
+    st.markdown(
+        """
+        Ile de France and Rhone-Alpes are the biggest electricity consumers, Bourgogne-Franche-Conté, Centre Val de Loire
+         are the lowest
+        """
+    )
+
+    st.subheader("Electricity exchange range for the different regions")
+    #COMPARISON OF THE DAILY EXCHANGE RANGE BY REGION
+    #We group the exchange by region and by date and make the daily sum
+    df_cons_day3 = df_day.groupby(['Région', 'Date'],as_index=False)['Ech. physiques (MW)'].sum()
+    #consumption range plot
+    fig_plot2 = px.box(df_cons_day3, x="Région", y="Ech. physiques (MW)", width=850, height= 600)
+    fig_plot2.update_traces(marker_color='blue')
+    st.write(fig_plot2)
+    st.markdown(
+    """
+    - Ile de France is the region who get the most electricity.
+    - Rhône-Alpes, Centre Val de Loire and Grand-Est are the first electricity provider for other regions.
+    - The amplitude of exchange is important between min and max.
+    
+    """
+)
+
 
     st.header("Analyse of the production")
     st.subheader("National electricity production from 2013 to 2021")
@@ -68,7 +103,7 @@ def run():
     )
 
     prod_type = st.selectbox(
-        'Which energy production did you want to display ?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)'))
+        'Which energy production did you want to display ?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)', 'Ech. physiques (MW)'))
     st.write('You selected the energy:', prod_type)
 
     def prod_plot(prod):
@@ -80,49 +115,14 @@ def run():
 
     prod_plot(prod_type)
 
-    st.subheader("Regional electricity production")
-
     st.markdown(
         """
-        With the menu below, choose which regional energy production you want to display
+        - Stable evolution for thermic energy production.
+        - Annual increase for wind energy, sun energy, bio energy, our green energies.
+        - Annual decrease for nuclear energy.
+        - The amplitude of energy exchange is increasing in time. The reason could be a change in the energy balance between regions, i.e. some regions needed more energy than others. This could also indicate an evolution in the energy production mix, e.g. closing of a nuclear factory.
         """
     )
-
-    prod_type2 = st.selectbox(
-        'Which energy production did you want to display ?', ('Nucléaire (MW)', 'Thermique (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)'))
-    st.write('You selected the energy:', prod_type2)
-
-    st.markdown(
-        """
-        With the menu below, choose which region you want to display
-        """
-    )
-    region = st.selectbox(
-        'Which region did you want to display the production?', ('Pays de la Loire',
-                                                              'Normandie',
-                                                              'Grand Est',
-                                                              'Centre-Val de Loire',
-                                                              'Bourgogne-Franche-Comté',
-                                                              'Île-de-France',
-                                                              'Auvergne-Rhône-Alpes',
-                                                              'Bretagne',
-                                                              'Occitanie',
-                                                              'Hauts-de-France',
-                                                              "Provence-Alpes-Côte d'Azur",
-                                                              'Nouvelle-Aquitaine'))
-
-    st.write('You selected the region:', region)
-
-    def prod_plot_reg(prod, reg):
-        df_day_reg = df_day[df_day['Région'] == reg]
-        df_cons_day = df_day_reg.groupby(['Date'], as_index= False)[prod].sum()
-        #st.write(df_day)
-
-        fig = px.line(df_cons_day, x='Date', y= prod, width = 850, height=500 )
-        ts_chart = st.plotly_chart(fig)
-
-    prod_plot_reg(prod_type2, region)
-
 
     st.header("Regional comparison of energy production, consumption and exchange")
 
@@ -168,6 +168,16 @@ def run():
     fig7.update_traces(marker_color='green')
 
     st.write(fig7)
+
+    st.markdown(
+        """
+        - Regions with high consumption and low production like ile de France  need to import much electricity from 
+          other regions.
+        - Regions who produce more electricity than they use have the capacity to export (Centre Val de Loire, Grand-Est
+          Rhône Alpes). This regions have generaly nuclear production.
+        - Haut de France is nearly on balance.
+        """
+    )
 
 
 

@@ -9,8 +9,8 @@ from prophet.plot import plot_cross_validation_metric
 from prophet.diagnostics import cross_validation
 
 
-title = "FB Prophet regional Models"
-sidebar_name = "FB Prophet regional Models"
+title = "Regional energy production forecast with fb Prophet"
+sidebar_name = "Regional Production Forecast"
 
 
 def run():
@@ -20,7 +20,8 @@ def run():
 
     st.markdown(
         """
-        On this page we focus on the regional energy production.
+        On this page we want focus on the regional energy production with a Facebook Prophet model. Could we have better or 
+        worse forecast than for the national model ?
         """
     )
 
@@ -66,4 +67,18 @@ def run():
 
 
     pred_plot_reg(region, prod_type)
+
+    st.markdown(
+        """
+        Make regional energy production forecast is clearly more complicated. 
+        - Except from nuclear production and solar production in the southern regions (who increase regulary every year),
+          all regional energy productions have a MAPE over 100%
+        - The region's energy production for many region is not only controlled by their own needs but also by others 
+          region needs who can be punctual, this affects the stability of seasonality.
+        - For the regional model the number of datas are 12 time lower than for the national model, this clearly impact
+          the performance from model.
+        - The investment of certain regions in renewable energies increase the production, which affects
+          the stability of the model.
+        """
+    )
 
