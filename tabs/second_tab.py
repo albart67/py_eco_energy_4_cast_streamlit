@@ -5,8 +5,8 @@ from PIL import Image
 import plotly_express as px
 
 
-title = "Global Data Analyse"
-sidebar_name = "Global Analyse"
+title = "Data analysis"
+sidebar_name = "Data analysis"
 
 
 
@@ -17,7 +17,7 @@ def run():
 
     st.markdown(
         """
-        We start with exploring the dataset and visualising some useful information for our analyse.
+        Let's start with with exploring the dataset!
         """
     )
 
@@ -29,11 +29,6 @@ def run():
     #st.write(df_day)
 
     st.header("Consumption")
-    st.markdown(
-        """
-        Analyse of the consumption
-        """
-    )
 
     st.subheader("National consumption evolution from 2013 to 2021")
 
@@ -43,7 +38,7 @@ def run():
 
     st.markdown(
         """
-        There is clearly a seasonality in the electricity consumption
+        * Electricity consumption is clearly a seasonal with peaks at the turn of the year.
         """
     )
 
@@ -56,7 +51,7 @@ def run():
     st.write(fig3)
     st.markdown(
         """
-        The consumption is about 10% lower in weekend
+        * Consumption is about 10% lower on weekends.
         """
     )
 
@@ -70,8 +65,8 @@ def run():
     st.write(fig_plot2)
     st.markdown(
         """
-        Ile de France and Rhone-Alpes are the biggest electricity consumers, Bourgogne-Franche-Conté, Centre Val de Loire
-         are the lowest
+        * Île-de-France and Auvergne-Rhône-Alpes comsume the most electricity, Bourgogne-Franche-Conté and Centre-Val de Loire
+         the least.
         """
     )
 
@@ -85,26 +80,26 @@ def run():
     st.write(fig_plot2)
     st.markdown(
     """
-    - Ile de France is the region who get the most electricity.
-    - Rhône-Alpes, Centre Val de Loire and Grand-Est are the first electricity provider for other regions.
-    - The amplitude of exchange is important between min and max.
+    - Île-de-France is the region, which imports the most electricity.
+    - Auvergne-Rhône-Alpes, Centre-Val de Loire and Grand-Est are the main electricity providers for other regions.
+    - The amplitude of exchange is important between min and max???
     
     """
 )
 
 
-    st.header("Analyse of the production")
+    st.header("Analysis of production")
     st.subheader("National electricity production from 2013 to 2021")
 
     st.markdown(
         """
-        With the menu below, choose which national energy production you want to display
+        With the menu below, choose which national energy production you want to display.
         """
     )
 
     prod_type = st.selectbox(
-        'Which energy production did you want to display ?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)', 'Ech. physiques (MW)'))
-    st.write('You selected the energy:', prod_type)
+        'Which energy production do you want to display ?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)', 'Ech. physiques (MW)'))
+    st.write('You selected:', prod_type)
 
     def prod_plot(prod):
         df_cons_day = df_day.groupby(['Date'], as_index= False)[prod].sum()
@@ -117,10 +112,10 @@ def run():
 
     st.markdown(
         """
-        - Stable evolution for thermic energy production.
-        - Annual increase for wind energy, sun energy, bio energy, our green energies.
+        - Stable evolution for thermal energy production.
+        - Annual increase for wind, sun and bio energy, our green energies.
         - Annual decrease for nuclear energy.
-        - The amplitude of energy exchange is increasing in time. The reason could be a change in the energy balance between regions, i.e. some regions needed more energy than others. This could also indicate an evolution in the energy production mix, e.g. closing of a nuclear factory.
+        - The amplitude of energy exchange is increasing over time. The reason could be a changing energy balance between regions, i.e. some regions needed more energy than others. This could also indicate a trend in the energy production mix, e.g. closing of a nuclear factory.
         """
     )
 
@@ -171,11 +166,11 @@ def run():
 
     st.markdown(
         """
-        - Regions with high consumption and low production like ile de France  need to import much electricity from 
+        - Regions with high consumption and low production like Île-de-France need to import electricity from 
           other regions.
-        - Regions who produce more electricity than they use have the capacity to export (Centre Val de Loire, Grand-Est
-          Rhône Alpes). This regions have generaly nuclear production.
-        - Haut de France is nearly on balance.
+        - Regions who produce more electricity than they consume have the capacity to export (Centre-Val de Loire, Grand-Est
+          Auvergne-Rhône Alpes). These regions have nuclear operations.
+        - Consumption and production in Hauts-de-France are nearly balanced.
         """
     )
 
