@@ -20,13 +20,12 @@ def run():
 
     st.markdown(
         """
-        The consumption is seasonal so we can suppose that the temperature is a important factor in consumption 
-        forecast. We have not temperature information in our dataset so we use another dataframe,
-        "temperature-quotidienne-regionale.csv" who is available on Eco2mix site and we merge it with our original dataset.
-        Will will use this temperatures as regressors in the fb Prophet model. The daily temperatures start on january 
-        2016, so we have less values than the original dataset who start in 2013.
+        Because consumption is seasonal we can assume that temperature is an important factor for predicting consumption. 
+        We acquired temperature data "temperature-quotidienne-regionale.csv" from the Eco2mix website and merged it with our dataset.
+        This allows us to include temperature data as regressor in our Facebook Prophet model. The period of daily temperature data starts on January 
+        2016, so we have to reduce our dataset (starting in 2013) accordingly.
         
-        We want to check if the add of temperatures datas can compensate for the shorter duration of time datas.
+        We want to evaluate if adding temperature data can compensate for the shorter time horizon of the adjusted dataset.
         """
     )
 
@@ -44,11 +43,11 @@ def run():
     st.subheader("Regional Consumption accuracy with regressor")
     """
     prod_type = st.selectbox(
-        'Which energy production did you want to display ?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)'))
+        'Which energy production do you want to display?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)'))
     st.write('You selected the energy:', prod_type)
     """
     region = st.selectbox(
-        'Which region did you want to display the production?', ('Pays de la Loire',
+        'Which region do you want to display?', ('Pays de la Loire',
                                                                  'Normandie',
                                                                  'Grand Est',
                                                                  'Centre-Val de Loire',
@@ -110,8 +109,8 @@ def run():
 
     st.markdown(
         """
-        The MAPE is improved for all regions. The gain of precision goes from 2 to 6% with an average of 3,8%.
+        The MAPE improved for all regions. The gain of precision goes from 2 to 6% with an average of 3.8%.
         
-        We can deduce that adding regressor is a good way to improve our model.
+        We can deduce that adding a temperature regressor is a good way to improve our model.
         """
     )

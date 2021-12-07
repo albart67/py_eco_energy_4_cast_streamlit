@@ -9,7 +9,7 @@ from prophet.plot import plot_cross_validation_metric
 from prophet.diagnostics import cross_validation
 
 
-title = "Regional energy production forecast with fb Prophet"
+title = "Regional energy production forecast with Facebook Prophet"
 sidebar_name = "Regional Production Forecast"
 
 
@@ -20,8 +20,8 @@ def run():
 
     st.markdown(
         """
-        On this page we want focus on the regional energy production with a Facebook Prophet model. Could we have better or 
-        worse forecast than for the national model ?
+        On this page we want focus on forecasting regional energy production with a Facebook Prophet model. Could we get a better or 
+        worse forecast compared with the national model?
         """
     )
 
@@ -32,11 +32,11 @@ def run():
 
 
     prod_type = st.selectbox(
-        'Which energy production did you want to display ?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)'))
+        'Which energy do you want to display ?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)'))
     st.write('You selected the energy:', prod_type)
 
     region = st.selectbox(
-        'Which region did you want to display the production?', ('Pays de la Loire',
+        'Which region do you want to display?', ('Pays de la Loire',
                                                                  'Normandie',
                                                                  'Grand Est',
                                                                  'Centre-Val de Loire',
@@ -62,7 +62,7 @@ def run():
         #fig2 = m.plot_components(forecast)
         df_cv = cross_validation(m, initial='2457 days', horizon = '615 days')
         df_p = performance_metrics(df_cv)
-        st.write('mean performance values :', df_p.mean())
+        st.write('Mean performance values :', df_p.mean())
         st.write(fig1)
 
 
@@ -70,14 +70,14 @@ def run():
 
     st.markdown(
         """
-        Make regional energy production forecast is clearly more complicated. 
-        - Except from nuclear production and solar production in the southern regions (who increase regulary every year),
-          all regional energy productions have a MAPE over 100%
-        - The region's energy production for many region is not only controlled by their own needs but also by others 
-          region needs who can be punctual, this affects the stability of seasonality.
-        - For the regional model the number of datas are 12 time lower than for the national model, this clearly impact
-          the performance from model.
-        - The investment of certain regions in renewable energies increase the production, which affects
+        Forecasting regional energy production is clearly more complicated. 
+        - Except for nuclear production and solar production in the southern regions (which increase regulary every year),
+          our forecast for all regions' energy production has a MAPE over 100%.
+        - The energy production for many regions is not only controlled by their own needs but also by other 
+          region's needs (which may be unexpected). This affects the stability of seasonality.
+        - For the regional model, the number of data points are twelve times lower than for the national model. This clearly impacts
+          the performance of the model.
+        - The investment of certain regions in renewable energies increases the production, which also affects
           the stability of the model.
         """
     )

@@ -4,7 +4,7 @@ import geopandas as gpd
 import plotly_express as px
 import json
 
-title = "Focus on the regional Production and consumption"
+title = "Focus on regional production and consumption"
 sidebar_name = "Regional data visualisation "
 
 
@@ -12,18 +12,18 @@ def run():
 
     # TODO: choose between one of these GIFs
     # st.image("https://dst-studio-template.s3.eu-west-3.amazonaws.com/1.gif")
-    st.image("https://dst-studio-template.s3.eu-west-3.amazonaws.com/2.gif")
+    # st.image("https://dst-studio-template.s3.eu-west-3.amazonaws.com/2.gif")
     # st.image("https://dst-studio-template.s3.eu-west-3.amazonaws.com/3.gif")
 
     st.title(title)
 
     st.markdown(
         """
-        - A color map allows us to  have a general view from electricity production in the different regions.
+        - A color map allows us to get a view on electricity consumption and production by regions.
         
-        - The year selection shows the production evolution over time.
+        - Shifting the year selection from left to right displays the evolution over time.
         
-        - The color map from energy exchanges shows the main energy flows between regions.
+        - The color map from energy exchanges (Ech. physiques) shows the main energy flows between regions.
         """
     )
 
@@ -45,13 +45,13 @@ def run():
     #st.write(jf)
 
     option = st.selectbox(
-         'Which parameter do you want to display ?', ('Consommation (MW)', 'Thermique (MW)','Nucléaire (MW)','Eolien (MW)','Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)','Ech. physiques (MW)'))
+         'Which parameter do you want to display?', ('Consommation (MW)', 'Thermique (MW)','Nucléaire (MW)','Eolien (MW)','Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)','Ech. physiques (MW)'))
     st.write('You selected:', option)
 
     year = st.select_slider(
-         'Select a year to display energy production',
+         'Which year do you want to display?',
                  options=[2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021])
-    st.write('you selected year: ', year)
+    st.write('You selected year: ', year)
 
     """
     year = st.selectbox(
@@ -93,25 +93,20 @@ def run():
     df_cons_day = df_day.groupby(['Date'], as_index= False)['Consommation (MW)'].sum()
 
 
-    st.subheader("Regional electricity production")
+    st.subheader("Regional electricity consumption and production")
 
     st.markdown(
         """
-        With the menu below, choose which regional energy production you want to display
+        With the menu below, choose which parameter and region you want to display.
         """
     )
 
     prod_type2 = st.selectbox(
-        'Which energy production did you want to display ?', ('Consommation (MW)','Nucléaire (MW)', 'Thermique (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)'))
-    st.write('You selected the energy:', prod_type2)
+        'Which parameter do you want to display?', ('Consommation (MW)','Nucléaire (MW)', 'Thermique (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)'))
+    st.write('You selected:', prod_type2)
 
-    st.markdown(
-        """
-        With the menu below, choose which region you want to display
-        """
-    )
     region = st.selectbox(
-        'Which region did you want to display the production?', ('Pays de la Loire',
+        'Which region do you want to display?', ('Pays de la Loire',
                                                                  'Normandie',
                                                                  'Grand Est',
                                                                  'Centre-Val de Loire',

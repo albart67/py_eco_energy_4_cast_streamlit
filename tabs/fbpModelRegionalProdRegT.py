@@ -20,10 +20,10 @@ def run():
 
     st.markdown(
         """
-        We have seen that forecasting regional energy production is difficult.
+        We have shown that forecasting regional energy production is difficult.
         
-        In our dataframe we have a kind of natural direct energies who are dependant on weather : sun and wind. We want
-        now to control if we can have a better accuracy in production prediction with adding temperature regressors.
+        Because solar and wind energy are strongly weather-dependent, we want
+        to evaluate if we can improve the accuracy of predicting solar and wind production by adding a temperature regressor to our model.
         """
     )
 
@@ -41,11 +41,11 @@ def run():
 
 
     prod_type = st.selectbox(
-        'Which energy production did you want to display ?', ('Eolien (MW)', 'Solaire (MW)'))
+        'Which energy do you want to display?', ('Eolien (MW)', 'Solaire (MW)'))
     st.write('You selected the energy:', prod_type)
 
     region2 = st.selectbox(
-        'Which region did you want to display the production ?', ('Pays de la Loire',
+        'Which region do you want to display?', ('Pays de la Loire',
                                                                  'Normandie',
                                                                  'Grand Est',
                                                                  'Centre-Val de Loire',
@@ -103,19 +103,19 @@ def run():
     st.markdown(
         """
         
-        - The average MAPE for solar and wind energy is 15 % better by adding the temperature regressors to the model.
+        - With temperature regressors added to the model, the average MAPE for solar and wind energy improves by 15%.
         
-        - For wind energy production, the MAPE is better with original dataset who contain more values and no 
-          temperature information. Teh seasonality of eolian electricity production is not as clear as for solar, this
-          can explain why the number of data is more important than the temperature regressor for this model. 
+        - For wind energy production, the MAPE is better using the original dataset (no temperature regressor, longer time horizon). 
+          The seasonality of wind electricity production is not as clear as for solar. This
+          can explain why the number of data points is more important than adding a temperature regressor to this model. 
                      
-        - The results with regressor are the best in the sunniest regions like Provence-Alpes Côte d’Azur or Occitanie.
-           These regions have mild winters and high production and there is clearly more correlation between solar 
-           energy production and temperature.
+        - The results with regressor are best in the sunniest regions like Provence-Alpes Côte d’Azur or Occitanie.
+           These regions have mild winters and high solar energy production. Therefore, the correlation between solar 
+           energy production and temperature is more important for the performance of the model.
            
-        We can conclude that temperature data improves our Prophet model. With a larger weather dataset the prediction
-        could even be better. The period of the dataset is also very important, especially since regions like 
-        Île-de-France saw their production increase rapidly over the last few years. Given that the number of wind 
+        We can conclude that adding temperature data improves our Prophet model. With a larger weather dataset the prediction
+        could improve even more. The period of the dataset is also very important, especially since regions like 
+        Île-de-France have seen their production increase rapidly over the last few years. Given that the number of wind 
         turbines installed is not linked with temperature data, investment in wind energy could also be a good 
         regressor to boost the model.
 

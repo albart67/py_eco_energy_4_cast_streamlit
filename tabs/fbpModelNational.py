@@ -9,7 +9,7 @@ from prophet.plot import plot_cross_validation_metric
 from prophet.diagnostics import cross_validation
 
 
-title = "National energy forecast with FB Prophet"
+title = "National energy forecast with Facebook Prophet"
 sidebar_name = "National energy forecast"
 
 
@@ -19,8 +19,8 @@ def run():
 
     st.markdown(
         """
-        We have seen in our analyse that the consumption has clearly a seasonal trend. We will use Facebook Prophet to
-        forecast the coming year for national electricity consumption and production.
+        We have seen that consumption has a seasonal trend. We will use Facebook Prophet to
+        forecast national electricity consumption and production.
         """
     )
 
@@ -30,8 +30,8 @@ def run():
 
     st.markdown(
         """
-        We first want to check the performances from model. We train the model on 80% of the daily consumption data 
-        and use 20% of the data (615 days called horizon in fb Prophet) to test it:'
+        We first want to evaluate the performance of the model. We train the model on 80% of the daily consumption data 
+        and use 20% of the data (615 days called horizon in fb Prophet) to test it:
         """
     )
 
@@ -48,17 +48,16 @@ def run():
 
     st.markdown(
         """
-        The mean absolute percent error for national consumption is about 7% with our model. As we have notice in the 
-        data analysis, there is a clear seasonality in the trend who bring a good efficiency to the model.
+        The mean absolute percent error for national consumption is about 7% with our model. The seasonal trend results in a good model efficiency.
         """
     )
 
-    st.subheader("Consumption forecast and decompositon from model")
+    st.subheader("Consumption forecast and model decompositon")
 
     st.markdown(
         """
         With the trained model we can display the predicted consumption for the next year and compare it with the last 
-        years. The black points are the daily consumption values from dataset :
+        years. The black points are the daily consumption values from our dataset:
         """
     )
 
@@ -71,9 +70,9 @@ def run():
 
     st.markdown(
         """
-        Fb Prophet can decompose the model with 3 trends: the general trend for the 8 years, a weekly trend and a yearly
-         trend. The general trend is a decrease of the consumption, weekly and yearly trends show us the same tendency 
-         we noticed in the data analyse.
+        Facebook Prophet can decompose the model in 3 components: the general trend for the time horizon, a weekly trend and a yearly
+         trend. The general trend is a decrease of consumption. Weekly and yearly trends show us the same tendency 
+         we noticed in the data analysis part.
         """
     )
 
@@ -85,11 +84,11 @@ def run():
 
     st.markdown(
         """
-        Like we do for the production, we generate models for electricity production. We are using the same proportion:
-        80% of the data for training and 20% for test. We display the mean MAPE obtained with test set (Horizon) 
-        compared to real values.
+        Like we did for consumption, we generate models for electricity production. We are using the same proportion:
+        80% of the data for training and 20% for test. We display the mean MAPE obtained with the test set (Horizon) 
+        compared to observed values.
         
-        We make also a 365 days future forecast.
+        We forecast 365 days into the future.
         """
     )
 
@@ -128,7 +127,7 @@ def run():
 
 
     prod_type = st.selectbox(
-        'Which energy production did you want to display ?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)'))
+        'Which energy do you want to display?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)'))
     st.write('You selected the energy:', prod_type)
 
     def prod_plot(prod):
@@ -162,15 +161,14 @@ def run():
 
     st.markdown(
         """
-        The production forecast as expected is not as accurate as consumption, we oberved a less obvious seasonnality 
-        on the data visualisation. 
+        The production forecast is not as accurate as for consumption. This was expected, because production exhibits a less obvious seasonal pattern. 
         
         Trends are:
-        - A high MAPE for Eolian and solar (69 and 71%) cause this are natural energies and not regular.
-        - Best MAPE  (16%) for nuclear cause it's a controlable energy and the more used with a good seasonnality.
-        - Thermical has a high MAPE (67%) because it's a back-up energy who is activated any time as needed to support
+        - Highest MAPEs for wind and solar (69 and 71%), because these are natural energies.
+        - Best MAPE (16%) for nuclear, because it's a controlable energy.
+        - Thermal energy has a high MAPE (67%), because it's a back-up energy which is activated as needed to support
          nuclear.
-        - Bioenergie has a good MAPE (7 %), the amplitude between maximum and minimum production is lower.
+        - Bioenergy has a good MAPE (7%), the amplitude between maximum and minimum production is lower.
         
         """
     )
