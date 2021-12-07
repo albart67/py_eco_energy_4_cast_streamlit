@@ -1,9 +1,18 @@
+from re import template
 import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import plotly_express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import mean_squared_error
+
 
 
 title = "Linear model"
@@ -17,81 +26,177 @@ def run():
     st.markdown("---")
 
     # Read the csv file
-    daily_shortage = pd.read_csv('daily_shortage.csv', 
-                                 sep = ',')
-     
-    daily_shortage = daily_shortage[daily_shortage['Shortage'] > 0]
+    daily_temper = pd.read_csv('df_t_dly.csv', sep = ',')
 
-    daily_shortage['Shortage'] /= 2
+    # Scale the consumption values to GW 
+    daily_temper['Consommation (MW)'] /= 1000
 
-    fig1 = px.line(daily_shortage,
-                   x = 'Date', y = 'Shortage',
-                   #range_y = [-10,10], 
-                   title = 'National electricity shortage', 
-                   labels = {'Shortage': 'MWh', 'Date':'Date'})
+    # Make region selector
+    regions = ['Auvergne-Rhône-Alpes', 'Bretagne', "Provence-Alpes-Côte d'Azur"]
 
-    fig1.update_layout(showlegend=False)
+    # Extract data for each region from df
+    reg_1_x = daily_temper[daily_temper['region'] == regions[0]]['tmoy']
+    reg_1_y = daily_temper[daily_temper['region'] == regions[0]]['Consommation (MW)']
+
+    reg_2_x = daily_temper[daily_temper['region'] == regions[1]]['tmoy']
+    reg_2_y = daily_temper[daily_temper['region'] == regions[1]]['Consommation (MW)']
+    
+    reg_3_x = daily_temper[daily_temper['region'] == regions[2]]['tmoy']
+    reg_3_y = daily_temper[daily_temper['region'] == regions[2]]['Consommation (MW)']
+    
+    # Make a subplot for each region
+    fig1 = make_subplots(rows=1, cols=3,
+    subplot_titles=(regions[0], regions[1], regions[2]),
+    shared_xaxes=True,
+    print_grid=False
+    )
+
+    fig1.add_trace(
+    go.Scatter(x = reg_1_x, y = reg_1_y, mode="markers+text"),
+    row=1, col=1
+    )
+
+    fig1.add_trace(
+    go.Scatter(x = reg_2_x, y = reg_2_y, mode="markers+text"),
+    row=1, col=2
+    )
+
+    fig1.add_trace(
+    go.Scatter(x = reg_3_x, y = reg_3_y, mode="markers+text"),
+    row=1, col=3
+    )
+
+    fig1.update_xaxes(title_text="Mean temperature (°C)")
+    fig1.update_yaxes(title_text="Energy comsumption (GW)", row=1, col=1)
+    fig1.update_xaxes(showgrid=False, zeroline= False)
+    fig1.update_yaxes(showgrid=False)
+    fig1.update_layout(height=500, width=800, 
+    title_text="Mean temperature & energy consumption (April 2019 - May 2021)",
+        showlegend= False)
+    
     st.write(fig1)
-
-    max_val = daily_shortage['Shortage'].max()
-    max_date = daily_shortage[daily_shortage['Shortage'] == max_val]['Date']
-    max_2_person_households = int(round(max_val*1000 / 5.5,0))
 
     st.markdown(
     '''
-    * Energy shortage is the difference between energy supply and energy consumption.
-    * The maximum value is '''+str(max_val)+''' MWh on '''+str(pd.to_datetime(max_date[1655]).month_name())+''' '''+str(pd.to_datetime(max_date[1655]).day)+str(', ')+str(pd.to_datetime(max_date[1655]).year)+str('.')+'''
-    * On this date, '''+str(max_2_person_households)+''' two-person households would theoretically suffer from energy shortage.
+    * There is a negative correlation between energy consumption and temperature for values up until 15 - 20 C°.
+    * Once the temperature rises above this level, the energy consumption rises as well.
+    * The correlation, especially for temperature values above 20 C° is not the same for each region; e.g. energy consumption in Provence-Alpes-Côte d’Azure (right) rises much more with an increase of temperature above 20 C° as compared to Bretagne (middle).
+    * We assume that for a temperature like 23 C° people in hot regions like Provence-Alpes-Côte d'Azur start their cooling systems while people in Bretagne don’t (maybe the latter are not even used to cooling and enjoy the warm temperature).
+    * Another reason for the different correlation above 20 C° could be the increasing number of tourists during the summer season in Provence-Alpes-Côte d’Azur.
     '''
-     )
-   
-   
-    ##############################
-    # Read a file for second chart
-    df_blackout = pd.read_csv('df_blackout.csv', sep = ',', index_col='Unnamed: 0')
+    )
 
-    # Select one region
-    regions = ['Bretagne', 'Nouvelle-Aquitaine', 'Île-de-France',
-       'Auvergne-Rhône-Alpes', 'Normandie', 'Bourgogne-Franche-Comté',
-       'Centre-Val de Loire', 'Grand Est', 'Hauts-de-France',
-       'Pays de la Loire', 'Occitanie', "Provence-Alpes-Côte d'Azur"]
-    region = regions[6]
-
-    # Compute the data
-    df_blackout_region = df_blackout[(df_blackout['Région'] == region) & (df_blackout['Person Blackout'] > 0) & (pd.to_datetime(df_blackout['Date']).dt.year > 2013)]
     
-    # Modify the df for plotting
-    plot_df = pd.DataFrame(df_blackout_region[['Consommation (MW)','Person Blackout','warm month']])
-    plot_df['Consommation (MW)'] = plot_df['Consommation (MW)']/1000/2
-    plot_df = plot_df.rename(mapper={'Consommation (MW)':'Electricity consumption (GWh)', 
-    'Person Blackout': 'Persons affected', 'warm month': 'warm_month'}, axis = 1)
-    plot_df = plot_df.astype({'warm_month':'str'})
+    # Polynomial model
 
-    # Plot the data
-    fig2 = px.scatter(plot_df, 
-                      x = 'Electricity consumption (GWh)', 
-                      y = 'Persons affected',
-                      color = 'warm_month', 
-                      title = 'Regional blackout risk for '+ region,
-                      labels={"warm_month": '',},
-                      category_orders = {'warm_month': ['0.0','1.0']})
-    fig2.update_layout(legend=dict(y=0.97, x=0.78))
+    region = regions[0]
 
-    newnames = {'0.0':'Cold month', '1.0': 'Warm month'}
-    fig2.for_each_trace(lambda t: t.update(name = newnames[t.name],
-                                      legendgroup = newnames[t.name],
-                                      hovertemplate = t.hovertemplate.replace(t.name, newnames[t.name])
-                                     )
-                  )
-    
+    temp = reg_1_x
+    cons = reg_1_y
+
+    # Train test split
+    X_train, X_test, y_train, y_test = train_test_split(temp, cons, 
+    test_size = .2, random_state = 321, shuffle = False
+    )
+
+    # Build a pipeline with scaler, polynomial features and linear regression
+    scaler = StandardScaler()
+
+    pol_feat = PolynomialFeatures(degree=2, include_bias=False)
+
+    lin_reg = LinearRegression()
+
+    pipe = Pipeline([('scaler', scaler), ("polynomial_features", pol_feat), ("linear_regression", lin_reg)])
+
+    # Fit the pipeline
+    pipe.fit(X_train[:, np.newaxis], y_train)
+
+    # Predict the consumption based on the temperature in X_test
+    pred = pipe.predict(X_train[:, np.newaxis])
+    pred_test = pipe.predict(X_test[:, np.newaxis])
+
+    # Create a dataframe to store the results in
+    lin_res = pd.DataFrame(pred_test, columns = ['pred_test'])
+    lin_res['X_test'] = X_test.values
+    lin_res['y_test'] = y_test.values
+    lin_res['squared errors'] = np.square(lin_res['y_test'] - lin_res['pred_test'])
+    lin_res['percentage errors'] = (lin_res['y_test'] - lin_res['pred_test']) / lin_res['y_test']
+    lin_res.sort_values(by = 'X_test', inplace = True)
+
+    # Plot the results
+    fig2 = make_subplots(rows=1, cols=1,
+    )
+
+    fig2.add_trace(
+    go.Scatter(x = X_train, y = y_train, mode="markers", name="Train"),
+    row=1, col=1
+    )
+
+    fig2.add_trace(
+    go.Scatter(x = X_test, y = y_test, mode="markers", name="Test"),
+    row=1, col=1
+    )
+
+    fig2.add_trace(
+    go.Scatter(x = lin_res['X_test'], y = lin_res['pred_test'], mode = "lines", name="Model"),
+    row=1, col=1
+    )
+
+    fig2.update_xaxes(title_text="Mean temperature (°C)")
+    fig2.update_yaxes(title_text="Energy comsumption (GW)", row=1, col=1)
+    fig2.update_xaxes(showgrid=False, zeroline= False)
+    fig2.update_yaxes(showgrid=False)
+    fig2.update_layout(height=500, 
+    width=800, 
+    showlegend= True, title_text=region
+    )
+
+    fig2.add_annotation(x=-3, y=350,
+            text="Train R²: "+str(pipe.score(X_train[:, np.newaxis], y_train).round(2)),
+            showarrow=False,
+            align="left")
+
+    fig2.add_annotation(x=-3, y=320,
+            text="Test R²: "+str(pipe.score(X_test[:, np.newaxis], y_test).round(2)),
+            showarrow=False,
+            align="left")
+
+    fig2.add_annotation(x=-3, y=290,
+            text="Train RMSE: "+str(np.sqrt(mean_squared_error(y_train, pred)).round(1)),
+            showarrow=False,
+            align="left")
+
+    fig2.add_annotation(x=-3, y=260,
+            text="Test RMSE: "+str(np.sqrt(mean_squared_error(y_test, pred_test)).round(1)),
+            showarrow=False,
+            align="left")
+
+    fig2.add_annotation(x=12.5, y=575,
+            text="{} - {}x + {}x²".format(round(abs(lin_reg.intercept_),2), round(abs(lin_reg.coef_[0]),2), round(abs(lin_reg.coef_[1]),2)),
+            showarrow=False,
+            align="center")
+
     st.write(fig2)
 
     st.markdown(
     '''
-    * We define regional blackout risk as the number of persons that are affected from energy shortage in that region.
-    * The number of persons affected equals regional energy shortage divided by the average electricity consumption per person in this region. 
-    * During warm month (May - September), the effect of energy shortage affects a higher number of people than during colder months.
-    * Possible explanation: Energy suppliers expect lower consumption during summer and therefore supply lower amounts of energy, which could lead to energy shortage when consumption peaks unexpectedly.
-    * Centre-Val de Loire, as an energy exporter, has a higher risk of energy shortage at low values of energy consumption compared with other regions.
+    * The test R² is similar to the train R², indicating that the model performs well.
+    * The test RMSE is just .1 higher than the train RMSE, a proof that the model is not overfitted and generalizes well.
+    * The test R² indicates that temperature variance explains about 76 % of energy consumption variance.
+    * The mean absolute percentage error of our prediction is '''+str(round(abs(lin_res['percentage errors']).mean()*100,1))+''' %.
+    * We calculated the Fisher test statistic and found that the temperature is significant for predicting energy consumption.
+    * A model based on a time series split cross-validation with ten splits has a mean RMSE of 35.3 +/- 1.9. This shows that our linear model works well.
     '''
     )
+    
+    
+    
+
+
+
+
+
+
+
+
+
