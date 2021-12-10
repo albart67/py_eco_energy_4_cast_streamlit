@@ -15,9 +15,11 @@ def run():
 
     st.title(title)
 
+    st.markdown("---")
+
     st.markdown(
         """
-        Let's start with with exploring the dataset!
+        Let's start with exploring the dataset!
         """
     )
 
@@ -29,24 +31,30 @@ def run():
     #st.write(df_day)
 
     st.header("Consumption")
+    st.markdown("---")
 
-    st.subheader("National consumption evolution from 2013 to 2021")
 
     #Plot of the the global consumption
     fig2 = px.line(df_cons_day, x='Date', y='Consommation (MW)', width=850, height=500)
+    fig2.update_xaxes(showgrid=False, zeroline= False)
+    fig2.update_yaxes(showgrid=False)
+    fig2.update_layout(title_text='National consumption from 2013 to 2021')
     ts_chart = st.plotly_chart(fig2)
 
     st.markdown(
         """
-        * Electricity consumption is clearly a seasonal with peaks at the turn of the year.
+        * Electricity consumption is clearly seasonal with peaks at the turn of the year.
         """
     )
-
-    st.subheader("Global consumption range for one week")
+    
+    
     #ANALYSE AND BAX PLOT OF THE GLOBAL CONSUMPTION INTO ONE WEEK
     df_cons_day2 = df_day.groupby(['Date','weekday'],as_index=False)['Consommation (MW)'].sum()
     fig3 = px.box(df_cons_day2, x='weekday', y = 'Consommation (MW)', width = 800, height= 500)
     fig3.update_traces(marker_color='darkblue')
+    fig3.update_xaxes(title_text='', showgrid=False, zeroline= False)
+    fig3.update_yaxes(showgrid=False)
+    fig3.update_layout(title_text='National weekly consumption range')
     #fig3.update_xaxes(type='category')
     st.write(fig3)
     st.markdown(
@@ -55,13 +63,15 @@ def run():
         """
     )
 
-    st.subheader("Consumption range for the different regions")
     #COMPARISON OF THE DAILY CONSUMPTION RANGE BY REGION
     #We group the consumption by region and by date and make the daily sum
     df_cons_day3 = df_day.groupby(['Région', 'Date'],as_index=False)['Consommation (MW)'].sum()
     #consumption range plot
     fig_plot2 = px.box(df_cons_day3, x="Région", y="Consommation (MW)", width=850, height= 600)
     fig_plot2.update_traces(marker_color='green')
+    fig_plot2.update_xaxes(title_text='', showgrid=False, zeroline= False)
+    fig_plot2.update_yaxes(showgrid=False)
+    fig_plot2.update_layout(title_text='Regional consumption range')
     st.write(fig_plot2)
     st.markdown(
         """
@@ -70,35 +80,38 @@ def run():
         """
     )
 
-    st.subheader("Electricity exchange range for the different regions")
+    
     #COMPARISON OF THE DAILY EXCHANGE RANGE BY REGION
     #We group the exchange by region and by date and make the daily sum
     df_cons_day3 = df_day.groupby(['Région', 'Date'],as_index=False)['Ech. physiques (MW)'].sum()
     #consumption range plot
     fig_plot2 = px.box(df_cons_day3, x="Région", y="Ech. physiques (MW)", width=850, height= 600)
     fig_plot2.update_traces(marker_color='blue')
+    fig_plot2.update_xaxes(title_text='', showgrid=False, zeroline= False)
+    fig_plot2.update_yaxes(showgrid=False, zeroline= False)
+    fig_plot2.update_layout(title_text='Electricity exchange variability by regions')
     st.write(fig_plot2)
     st.markdown(
     """
     - Île-de-France is the region, which imports the most electricity.
     - Auvergne-Rhône-Alpes, Centre-Val de Loire and Grand-Est are the main electricity providers for other regions.
-    - The amplitude of exchange is important between min and max???
-    
+    - The variability of exchange expressed as the difference between the minimum and maximum value is quite different for each region: e.g. energy exporters (left below zero) have higher variability than other regions. 
     """
 )
 
 
-    st.header("Analysis of production")
-    st.subheader("National electricity production from 2013 to 2021")
+    st.header("Production")
+    st.markdown('---')
+    #st.subheader("National electricity production from 2013 to 2021")
 
     st.markdown(
         """
-        With the menu below, choose which national energy production you want to display.
+        With the menu below, choose which national electricity production you want to display.
         """
     )
 
     prod_type = st.selectbox(
-        'Which energy production do you want to display ?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)', 'Ech. physiques (MW)'))
+        'Which electricity production do you want to display ?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)', 'Ech. physiques (MW)'))
     st.write('You selected:', prod_type)
 
     def prod_plot(prod):
@@ -106,6 +119,9 @@ def run():
         #st.write(df_day)
 
         fig = px.line(df_cons_day, x='Date', y= prod, width = 850, height=500 )
+        fig.update_xaxes(showgrid=False, zeroline= False)
+        fig.update_yaxes(showgrid=False, zeroline= False)
+        fig.update_layout(title_text='National electricity production from 2013 to 2021')
         ts_chart = st.plotly_chart(fig)
 
     prod_plot(prod_type)
@@ -120,8 +136,9 @@ def run():
     )
 
     st.header("Regional comparison of energy production, consumption and exchange")
+    st.markdown('---')
 
-    st.subheader("Regional electricity production mix")
+    #st.subheader("Regional electricity production mix")
 
     #Energy production repartition by region
     #We group the different columns of electricity productions by region and make the sum
@@ -131,36 +148,46 @@ def run():
     fig5 = px.bar(df_rep_reg, x="Région", y=['Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Bioénergies (MW)'], width=850, height=720)
 
     fig5.update_layout(
+        title_text='Regional electricity production mix',
         legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
+            orientation="v",
+            x=.8,
+            y=.98,
             title_font_family="arial",
             font=dict(
                 family="arial",
                 size=10,
-                color="black"
+                color="white"
             ),
-            #bgcolor="LightSteelBlue",
-            bordercolor="Black",
+            bgcolor=None,
+            #bordercolor=None,
+            title=''
             )
     )
+    fig5.update_xaxes(title_text="", showgrid=False, zeroline= False)
+    fig5.update_yaxes(title_text="MW", showgrid=False)
 
     st.write(fig5)
 
-    st.subheader("Regional electricity consumption")
+    #st.subheader("Regional electricity consumption")
     #Energy consumption by region
     #We group the different columns of electricity consumption by region and make the sum
     df_reg_cons = df_day.groupby(['Région'], as_index = False)['Consommation (MW)'].sum()
     fig6 = px.bar(df_reg_cons, x = 'Région', y='Consommation (MW)', width=850, height=700);
+    fig6.update_xaxes(title_text='', showgrid=False, zeroline= False)
+    fig6.update_yaxes(showgrid=False)
+    fig6.update_layout(title_text='Regional electricity consumption')
     st.write(fig6)
 
-    st.subheader("Regional electricity exchange")
+    #st.subheader("Regional electricity exchange")
     #Energy exchange by region
     #We group the different columns of electricity exchange by region and make the sum
     df_ech = df_day.groupby(['Région'],as_index=False)['Ech. physiques (MW)'].sum()
     fig7 = px.bar(df_ech, x = 'Région', y='Ech. physiques (MW)', width=850, height=700)
     fig7.update_traces(marker_color='green')
+    fig7.update_xaxes(title_text='', showgrid=False, zeroline= False)
+    fig7.update_yaxes(showgrid=False, zeroline= False)
+    fig7.update_layout(title_text='Regional electricity exchange')
 
     st.write(fig7)
 
@@ -168,8 +195,9 @@ def run():
         """
         - Regions with high consumption and low production like Île-de-France need to import electricity from 
           other regions.
-        - Regions who produce more electricity than they consume have the capacity to export (Centre-Val de Loire, Grand-Est
-          Auvergne-Rhône Alpes). These regions have nuclear operations.
+        - Regions, which produce more electricity than they consume have the capacity to export 
+        (Centre-Val de Loire, Grand-Est, Auvergne-Rhône Alpes). 
+        These regions have nuclear operations.
         - Consumption and production in Hauts-de-France are nearly balanced.
         """
     )

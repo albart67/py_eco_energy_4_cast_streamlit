@@ -9,7 +9,7 @@ from prophet.plot import plot_cross_validation_metric
 from prophet.diagnostics import cross_validation
 
 
-title = "Energy production forecast with adding a temperature regressor"
+title = "Production forecast with temperature regressor"
 sidebar_name = "Production with T° regressor"
 
 
@@ -17,6 +17,7 @@ def run():
 
     st.title(title)
 
+    st.markdown("---")
 
     st.markdown(
         """
@@ -27,16 +28,17 @@ def run():
         """
     )
 
-    st.subheader("Original dataframe merged with temperature-quotidienne-regionale ")
+    #st.subheader("Original dataframe merged with temperature-quotidienne-regionale ")
 
     df_day = pd.read_csv('df_t_dly.csv', sep =',', index_col='Unnamed: 0')
     df_day['Date'] = pd.to_datetime(df_day['Date']).dt.date
     df_day[['Consommation (MW)', 'Thermique (MW)','Nucléaire (MW)','Eolien (MW)','Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)']] = df_day[['Consommation (MW)','Thermique (MW)','Nucléaire (MW)','Eolien (MW)','Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)']].apply(pd.to_numeric, errors='coerce')
     df_day[['tmin', 'tmax', 'tmoy']] = df_day[['tmin', 'tmax', 'tmoy']].apply(pd.to_numeric, errors='coerce')
     df_day = df_day.sort_values(by=['Date'], ignore_index=True)
-    st.write(df_day.head(10))
+    #st.write(df_day.head(10))
 
-    st.header( "Comparison of the model efficiency with regressor and without regressor")
+    st.header("Regional production accuracy with regressor")
+    st.markdown('---')
 
 
 
@@ -60,8 +62,6 @@ def run():
 
     st.write('You selected the region:', region2)
 
-    st.subheader("Regional Consumption accuracy with regressor")
-
     def pred_plot_reg(reg, prod):
         df_reg = df_day[df_day['region']== reg]
         prophet_df = df_reg.rename(columns = {'Date' : 'ds', prod: 'y'})
@@ -74,13 +74,15 @@ def run():
         df_cv = cross_validation(m, initial='1582 days', horizon = '395 days')
         df_p = performance_metrics(df_cv)
         fig = plot_cross_validation_metric(df_cv, metric='mape')
-        st.write('Mean absolute percentage error with regressor :', (round(df_p.mean().mape, 2)*100), " %")
         st.write(fig)
+        st.write('Mean absolute percentage error with regressor :', round(df_p.mean().mape*100, 2), " %")
 
 
     pred_plot_reg(region2, prod_type)
 
-    st.subheader("Regional Consumption accuracy without regressor")
+    st.header("Regional production accuracy without regressor")
+    st.markdown('---')
+    #st.subheader("Regional Consumption accuracy without regressor")
     def pred_plot_reg2(reg, prod):
         df_reg = df_day[df_day['region']== reg]
         prophet_df = df_reg.rename(columns = {'Date' : 'ds', prod: 'y'})
@@ -93,9 +95,11 @@ def run():
         df_cv = cross_validation(m, initial='1582 days', horizon = '395 days')
         df_p = performance_metrics(df_cv)
         fig = plot_cross_validation_metric(df_cv, metric='mape')
-        st.write('Mean absolute percentage error without regressor :', (round(df_p.mean().mape, 2)*100), " %")
+        
         #st.write('Mean absolute percentage error :', df_p.mean())
+        
         st.write(fig)
+        st.write('Mean absolute percentage error without regressor :', round(df_p.mean().mape*100, 2), " %")
 
 
     pred_plot_reg2(region2, prod_type)
@@ -103,7 +107,7 @@ def run():
     st.markdown(
         """
         
-        - With temperature regressors added to the model, the average MAPE for solar and wind energy improves by 15%.
+        - With temperature regressors added to the model, the average MAPE for solar and wind energy improves by 15 %.
         
         - For wind energy production, the MAPE is better using the original dataset (no temperature regressor, longer time horizon). 
           The seasonality of wind electricity production is not as clear as for solar. This
@@ -117,11 +121,8 @@ def run():
         could improve even more. The period of the dataset is also very important, especially since regions like 
         Île-de-France have seen their production increase rapidly over the last few years. Given that the number of wind 
         turbines installed is not linked with temperature data, investment in wind energy could also be a good 
-        regressor to boost the model.
-
-           
+        regressor to boost the model. 
         """
-
     )
 
 

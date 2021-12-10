@@ -9,7 +9,7 @@ from prophet.plot import plot_cross_validation_metric
 from prophet.diagnostics import cross_validation
 
 
-title = "Energy consumption forecast with adding a temperature regressor"
+title = "Consumption forecast with temperature regressor"
 sidebar_name = "Consumption with T° regressor"
 
 
@@ -17,19 +17,16 @@ def run():
 
     st.title(title)
 
+    st.markdown("---")
 
     st.markdown(
         """
         Because consumption is seasonal we can assume that temperature is an important factor for predicting consumption. 
         We acquired temperature data "temperature-quotidienne-regionale.csv" from the Eco2mix website and merged it with our dataset.
         This allows us to include temperature data as regressor in our Facebook Prophet model. The period of daily temperature data starts on January 
-        2016, so we have to reduce our dataset (starting in 2013) accordingly.
-        
-        We want to evaluate if adding temperature data can compensate for the shorter time horizon of the adjusted dataset.
+        2016, so we have to reduce our dataset (starting in 2013) accordingly. Combined dataset:
         """
     )
-
-    st.subheader("Original dataframe merged with temperature-quotidienne-regionale ")
 
     df_day = pd.read_csv('df_t_dly.csv', sep =',', index_col='Unnamed: 0')
     df_day['Date'] = pd.to_datetime(df_day['Date']).dt.date
@@ -38,9 +35,17 @@ def run():
     df_day = df_day.sort_values(by=['Date'], ignore_index=True)
     st.write(df_day.head(10))
 
-    st.header( "Comparison of the model efficiency with regressor and without regressor")
+    st.markdown(
+        """
+        We want to evaluate if adding temperature data can compensate for the shorter time horizon of the adjusted dataset.
+        """
+    )
 
-    st.subheader("Regional Consumption accuracy with regressor")
+    #st.subheader("Original dataframe merged with temperature-quotidienne-regionale ")
+
+    st.header( "Regional consumption accuracy with regressor")
+    st.markdown('---')
+
     """
     prod_type = st.selectbox(
         'Which energy production do you want to display?', ('Thermique (MW)','Nucléaire (MW)','Eolien (MW)', 'Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)'))
@@ -76,14 +81,16 @@ def run():
         df_p = performance_metrics(df_cv)
         fig = plot_cross_validation_metric(df_cv, metric='mape')
         #fig1 = m.plot(forecast)
-        st.write('Mean absolute percentage error :', (round(df_p.mean().mape, 2)*100), " %")
+        
         st.write(fig)
+        st.write('Mean absolute percentage error with regressor:', (round(df_p.mean().mape, 2)*100), " %")
         #st.write(fig1)
 
 
     cons_reg(region)
 
-    st.subheader("Regional Consumption accuracy without regressor")
+    st.header("Regional consumption accuracy without regressor")
+    st.markdown('---')
 
     def cons_reg2(region):
         df_reg = df_day[df_day['region']== region]
@@ -100,8 +107,9 @@ def run():
         df_p = performance_metrics(df_cv)
         fig = plot_cross_validation_metric(df_cv, metric='mape')
         #fig1 = m.plot(forecast)
-        st.write('Mean absolute percentage error :', (round(df_p.mean().mape, 2)*100), " %")
+        
         st.write(fig)
+        st.write('Mean absolute percentage error without regressor:', round(df_p.mean().mape*100, 2), " %")
         #st.write(fig1)
 
 
@@ -109,7 +117,7 @@ def run():
 
     st.markdown(
         """
-        The MAPE improved for all regions. The gain of precision goes from 2 to 6% with an average of 3.8%.
+        The MAPE improved for all regions. The gain of precision goes from 2 to 6 % with an average of 3.8 %.
         
         We can deduce that adding a temperature regressor is a good way to improve our model.
         """

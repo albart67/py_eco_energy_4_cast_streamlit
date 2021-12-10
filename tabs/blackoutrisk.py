@@ -30,6 +30,9 @@ def run():
                    title = 'National electricity shortage', 
                    labels = {'Shortage': 'MWh', 'Date':'Date'})
 
+    fig1.update_xaxes(showgrid=False, zeroline= False)
+    fig1.update_yaxes(showgrid=False, zeroline= False)
+    
     fig1.update_layout(showlegend=False)
     st.write(fig1)
 
@@ -75,6 +78,9 @@ def run():
                       title = 'Regional blackout risk for '+ region,
                       labels={"warm_month": '',},
                       category_orders = {'warm_month': ['0.0','1.0']})
+    
+    fig2.update_xaxes(showgrid=False, zeroline= False)
+    fig2.update_yaxes(showgrid=False, zeroline= False)
     fig2.update_layout(legend=dict(y=0.97, x=0.78))
 
     newnames = {'0.0':'Cold month', '1.0': 'Warm month'}

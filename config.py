@@ -15,7 +15,10 @@ TEAM_MEMBERS = [
         linkedin_url="https://www.linkedin.com/in/alain-barthelme-4a02b128/",
         github_url="https://github.com/albart67",
     ),
-    Member("Christopher Kerth"),
+    Member(
+        name = "Christopher Kerth",
+        linkedin_url="https://www.linkedin.com/in/ckdata/",
+        github_url="https://github.com/carisoka"),
 ]
 
 PROMOTION = "Promotion formation continue Data Analyste - Mai 2021"

@@ -10,18 +10,19 @@ from prophet.diagnostics import cross_validation
 
 
 title = "Regional energy production forecast with Facebook Prophet"
-sidebar_name = "Regional Production Forecast"
+sidebar_name = "Regional production forecast"
 
 
 def run():
 
     st.title(title)
 
+    st.markdown("---")
+
 
     st.markdown(
         """
-        On this page we want focus on forecasting regional energy production with a Facebook Prophet model. Could we get a better or 
-        worse forecast compared with the national model?
+        Let's apply the Facebook Prophet model on regional energy production. How does the quality of this forecast compare with the national model?
         """
     )
 

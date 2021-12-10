@@ -4,8 +4,8 @@ import geopandas as gpd
 import plotly_express as px
 import json
 
-title = "Focus on regional production and consumption"
-sidebar_name = "Regional data visualisation "
+title = "Regional consumption and supply"
+sidebar_name = "Regional evolution"
 
 
 def run():
@@ -17,9 +17,11 @@ def run():
 
     st.title(title)
 
+    st.markdown("---")
+
     st.markdown(
         """
-        - A color map allows us to get a view on electricity consumption and production by regions.
+        - A color map allows us to get a view on electricity consumption and supply by regions.
         
         - Shifting the year selection from left to right displays the evolution over time.
         
@@ -33,7 +35,6 @@ def run():
     df_maps[['year']] = df_maps[['year']].apply(pd.to_numeric, errors='coerce')
     df_maps.rename({'Code INSEE région': 'code'}, axis=1, inplace=True)
     #st.write(df_maps)
-    st.markdown("---")
 
     france_reg = json.load(open("regions.geojson", "r"))
     sf = gpd.read_file('regions.geojson')
@@ -93,11 +94,9 @@ def run():
     df_cons_day = df_day.groupby(['Date'], as_index= False)['Consommation (MW)'].sum()
 
 
-    st.subheader("Regional electricity consumption and production")
-
     st.markdown(
         """
-        With the menu below, choose which parameter and region you want to display.
+        With the menu below, choose which parameter and region you want to display on a date axis.
         """
     )
 
@@ -127,6 +126,8 @@ def run():
         #st.write(df_day)
 
         fig = px.line(df_cons_day, x='Date', y= prod, width = 850, height=500 )
+        fig.update_xaxes(showgrid=False, zeroline= False)
+        fig.update_yaxes(showgrid=False)
         ts_chart = st.plotly_chart(fig)
 
     prod_plot_reg(prod_type2, region)
